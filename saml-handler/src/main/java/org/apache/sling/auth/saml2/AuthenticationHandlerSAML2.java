@@ -26,7 +26,6 @@ import org.apache.sling.auth.core.AuthUtil;
 import org.apache.sling.auth.saml2.sp.*;
 import org.apache.sling.auth.saml2.impl.SAML2ConfigServiceImpl;
 import org.apache.sling.auth.saml2.impl.Saml2Credentials;
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
@@ -73,6 +72,7 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -323,7 +323,7 @@ public class AuthenticationHandlerSAML2 extends DefaultAuthenticationFeedbackHan
      */
     private AuthnRequest buildAuthnRequest() {
         AuthnRequest authnRequest = Helpers.buildSAMLObject(AuthnRequest.class);
-        authnRequest.setIssueInstant(new DateTime());
+        authnRequest.setIssueInstant(Instant.now());
         authnRequest.setDestination(saml2ConfigService.getSaml2IDPDestination());
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         // Entity ID
@@ -510,9 +510,10 @@ public class AuthenticationHandlerSAML2 extends DefaultAuthenticationFeedbackHan
             return false;
         }
         final SubjectConfirmationData subjectConfirmationData = subjectConfirmations.get(0).getSubjectConfirmationData();
-        final DateTime notOnOrAfter = subjectConfirmationData.getNotOnOrAfter();
+        final Instant notOnOrAfter = subjectConfirmationData.getNotOnOrAfter();
         // validate expiration
-        final boolean validTime = notOnOrAfter.isAfterNow();
+
+        final boolean validTime = notOnOrAfter.isAfter(Instant.now());
         if (!validTime) {
             logger.error("SAML2 Subject Confirmation failed validation: Expired.");
         }

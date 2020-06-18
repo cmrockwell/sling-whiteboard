@@ -1,7 +1,9 @@
 # Apache Sling SAML2 Handler (NOT FOR PRODUCTION)
 
-This project is intended to be a contribution to the [Apache Sling](https://sling.apache.org) project;
- it has a SAML2 Service Provider Authentication Handler and the associated SAML2 servlets and utilities. It is a work in progress and not production ready!
+This contribution to the [Apache Sling](https://sling.apache.org) project;
+ provides a SAML2 Web Profile Service Provider Authentication. 
+ It is not yet production ready!
+
 
 ## Overview
 https://en.wikipedia.org/wiki/SAML_2.0
@@ -12,7 +14,7 @@ https://en.wikipedia.org/wiki/SAML_2.0
  
 ## Features  
 Sling applications to authenticate users against Identity Providers (idp) 
-such as Keycloak or Shibboleth using SAML2 protocols.
+such as Keycloak or Shibboleth servers
 
 Synchronize user management based on the SAML2 Assertion and OSGi bundle configs  
   - Create the user upon successful IDP authentication
@@ -22,12 +24,11 @@ Synchronize user management based on the SAML2 Assertion and OSGi bundle configs
 `Helpers` hold static utility methods used with the OpenSAML V3 library  
 The parent `saml2` package has interface definitions, the bundle Activator
 
-### OSGI Requirements
-It is assumed the Sling environment provides certain bundles. The SAML2 bundle will not activate without:  
-* org.apache.jackrabbit.oak-auth-external
+### Requirements
 
+* The SAML2 bundle will not activate without: org.apache.jackrabbit.oak-auth-external
+* Java 11
 
- 
  
 ## JKS Options  
 Just as Jetty requires a JKS to enable https, the SAML2 SP bundle requires a JKS to hold the IDP's signing certificate and to hold the SAML2 Service providers encryption key-pair. One suggestion is to locate these under the sling folder...
@@ -63,8 +64,8 @@ After enabling Jetty to use https over port 2443, you will need to accept the br
 
 ## IDP Test Setup
 Run an IDP locally.  
-1. Assuming Sling runs on 8080, use the docker commnd to run Keycloak on port *8088* sign into the IDP using admin:admin   
-1.1. `docker run -p 8088:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin quay.io/keycloak/keycloak:9.0.2`  
+1. Assuming Sling runs on 8080, use the docker commnd to run Keycloak on port *8484* sign into the IDP using admin:admin   
+1.1. `docker run -p 8484:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin quay.io/keycloak/keycloak:10.0.2`  
 or run it in standalone https://www.keycloak.org/docs/latest/getting_started/  
 1.2. Configure the IDP manually with some basic settings such as the one described below;   
     * create a localhost realm with a Client ID set to https://localhost:2443/ or whatever entity identifier you want
@@ -171,3 +172,4 @@ Visit https://localhost:2443 and observe login takes place on the http://localho
 Enter the credentials saml2-example:password, and observe user is granted access to the system.
 ![](src/main/resources/signedInUser.png)
 
+This module was contributed by Cris Rockwell and Regents of the University of Michigan
