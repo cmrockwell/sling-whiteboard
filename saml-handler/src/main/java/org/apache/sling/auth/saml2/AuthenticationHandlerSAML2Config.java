@@ -15,6 +15,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * Contributed by Cris Rockwell and the Regents of the University of Michigan.
  */
 
 package org.apache.sling.auth.saml2;
@@ -74,6 +76,10 @@ public @interface AuthenticationHandlerSAML2Config {
     @AttributeDefinition(name = "SAML2 IDP Destination",
         description="")
     String saml2IDPDestination() default "http://localhost:8080/idp/profile/SAML2/Redirect/SSO";
+
+    @AttributeDefinition(name = "Logout URL",
+            description="Redirect User to this URL when they logout")
+    String saml2LogoutURL() default "https://sling.apache.org/";
 
     @AttributeDefinition(
         name = "Service Provider Enabled",

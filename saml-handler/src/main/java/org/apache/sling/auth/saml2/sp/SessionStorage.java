@@ -19,6 +19,9 @@
 
 package org.apache.sling.auth.saml2.sp;
 
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.SessionIndex;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,12 +41,20 @@ public class SessionStorage {
         this.sessionAttributeName = sessionAttributeName;
     }
 
+    /**
+     * Setting String Attributes. Store string info in an http session attribute.
+      * @param request
+     * @param info
+     */
     public void setString(HttpServletRequest request, String info) {
-        // store string info in a session attribute
         HttpSession session = request.getSession();
         session.setAttribute(sessionAttributeName, info);
     }
 
+    /**
+     * Getting String Attributes
+     * @param request
+     */
     public String getString(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -55,6 +66,38 @@ public class SessionStorage {
         return null;
     }
 
+    /**
+     * Setting NAME ID (from SAML Assertion)
+     * @param request
+     * @param nameId
+     */
+    public void setNameID(HttpServletRequest request, NameID nameId) {
+        // store NameID in a session attribute
+        HttpSession session = request.getSession();
+        session.setAttribute(sessionAttributeName, nameId);
+    }
+
+    /**
+     * Getting SAML2 NAME ID
+     * @param request
+     * @return NameID
+     */
+    public NameID getNameID(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object attribute = session.getAttribute(sessionAttributeName);
+            if (attribute instanceof NameID) {
+                return (NameID) attribute;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Remove this attribute from the http session
+     * @param request
+     * @param response
+     */
     public void clear(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session != null) {

@@ -15,6 +15,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * Contributed by Cris Rockwell and the Regents of the University of Michigan.
  */
 package org.apache.sling.auth.saml2.impl;
 
@@ -46,10 +48,13 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
     private String idpCertAlias;
     private String acsPath;
     private String[] syncAttrs;
+    private String saml2LogoutURL;
 
     public static final String GOTO_URL_SESSION_ATTRIBUTE = "gotoURL";
     public static final String SAML2_REQUEST_ID = "saml2RequestID";
     public static final String AUTHENTICATED_SESSION_ATTRIBUTE = "authenticated";
+    public static final String SESSIONINDEX_SESSION_ATTRIBUTE = "SessionIndex";
+    public static final String NAMEID_SESSION_ATTRIBUTE = "NameID";
 
     @Activate
     protected void activate(final AuthenticationHandlerSAML2Config config, ComponentContext componentContext) {
@@ -69,6 +74,7 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
         this.idpCertAlias = config.idpCertAlias();
         this.acsPath = config.acsPath();
         this.syncAttrs = config.syncAttrs();
+        this.saml2LogoutURL = config.saml2LogoutURL();
     }
 
 
@@ -120,6 +126,11 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
     @Override
     public boolean getSaml2SPEncryptAndSign() {
         return this.saml2SPEncryptAndSign;
+    }
+
+    @Override
+    public String getSaml2LogoutURL() {
+        return this.saml2LogoutURL;
     }
 
     @Override

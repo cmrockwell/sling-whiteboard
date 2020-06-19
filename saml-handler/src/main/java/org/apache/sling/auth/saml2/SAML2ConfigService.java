@@ -38,4 +38,5 @@ public interface SAML2ConfigService {
     String getSpKeysAlias();
     String getIdpCertAlias();
     String getSpKeysPassword();
+    String getSaml2LogoutURL();
 }
