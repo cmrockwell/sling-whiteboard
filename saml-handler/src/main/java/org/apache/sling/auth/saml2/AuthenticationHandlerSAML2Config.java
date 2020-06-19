@@ -76,29 +76,35 @@ public @interface AuthenticationHandlerSAML2Config {
     String saml2IDPDestination() default "http://localhost:8080/idp/profile/SAML2/Redirect/SSO";
 
     @AttributeDefinition(
-        name = "SP Authentication Handler",
-        description = " SAML2 Authentication Handler Enabled",
+        name = "Service Provider Enabled",
+        description = "SAML2 Web Profile Service Provider Authentication Handler Enabled",
         type = AttributeType.BOOLEAN )
     boolean saml2SPEnabled() default false;
 
+    @AttributeDefinition(
+            name = "Sign and Encrypt Assertions",
+            description = "Highly Recommended for security",
+            type = AttributeType.BOOLEAN )
+    boolean saml2SPEncryptAndSign() default false;
+
     @AttributeDefinition(name = "Java Keystore (.jks) file location",
         description="File location of the Java Keystore JKS")
-    String jksFileLocation() default "./sling/keys/samlKeystore.jks";
+    String jksFileLocation() default "";
 
     @AttributeDefinition(name = "JKS Password (storepass)",
         description="Password needed for accessing the JKS")
-    String jksStorePassword() default "jksStorePassword";
+    String jksStorePassword() default "";
 
     @AttributeDefinition(name = "IDP Signing Certificate Alias",
         description="Alias of certificate to be used when verifying Identity Provider signature")
-    String idpCertAlias() default "idpCert";
+    String idpCertAlias() default "";
 
     @AttributeDefinition(name = "SP Keystore Alias",
         description="Alias identifying the Service Provider (SP) Encryption Key-pair (keystore alias)")
-    String spKeysAlias() default "samlKeys";
+    String spKeysAlias() default "";
 
     @AttributeDefinition(name = "SP Keystore Password (keystore)",
         description="Password needed for accessing the Service Provider (SP) Key Pair identified by the SP Keystore Alias")
-    String spKeysPassword() default "keystore";
+    String spKeysPassword() default "";
 
 }

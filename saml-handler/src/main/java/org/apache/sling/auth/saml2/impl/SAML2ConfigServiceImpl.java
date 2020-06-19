@@ -34,6 +34,7 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
     private String saml2SessAttr;
     private String saml2IDPDestination;
     private boolean saml2SPEnabled = false;
+    private boolean saml2SPEncryptAndSign = false;
     private String uidAttrName;
     private String samlUserHome;
     private String groupMembershipName;
@@ -55,6 +56,7 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
         this.path = config.path();
         this.saml2SessAttr = config.saml2SessionAttr();
         this.saml2SPEnabled = config.saml2SPEnabled();
+        this.saml2SPEncryptAndSign = config.saml2SPEncryptAndSign();
         this.saml2IDPDestination = config.saml2IDPDestination();
         this.uidAttrName = config.saml2userIDAttr();
         this.samlUserHome = config.saml2userHome();
@@ -113,6 +115,11 @@ public class SAML2ConfigServiceImpl implements SAML2ConfigService {
     @Override
     public boolean getSaml2SPEnabled() {
         return this.saml2SPEnabled;
+    }
+
+    @Override
+    public boolean getSaml2SPEncryptAndSign() {
+        return this.saml2SPEncryptAndSign;
     }
 
     @Override

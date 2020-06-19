@@ -135,17 +135,19 @@ public class AuthenticationHandlerSAML2 extends DefaultAuthenticationFeedbackHan
 
         final File tokenFile = getTokenFile(componentContext.getBundleContext());
         this.tokenStore = new TokenStore(tokenFile, sessionTimeout, false);
-//      set encryption keys
-        this.spKeypair = KeyPairCredentials.getCredential(
-                saml2ConfigService.getJksFileLocation(),
-                saml2ConfigService.getJksStorePassword(),
-                saml2ConfigService.getSpKeysAlias(),
-                saml2ConfigService.getSpKeysPassword());
-//      set credential for signing
-        this.idpVerificationCert = VerifySignatureCredentials.getCredential(
-                saml2ConfigService.getJksFileLocation(),
-                saml2ConfigService.getJksStorePassword(),
-                saml2ConfigService.getIdpCertAlias());
+        if (saml2ConfigService.getSaml2SPEncryptAndSign()) {
+            //      set encryption keys
+            this.spKeypair = KeyPairCredentials.getCredential(
+                    saml2ConfigService.getJksFileLocation(),
+                    saml2ConfigService.getJksStorePassword(),
+                    saml2ConfigService.getSpKeysAlias(),
+                    saml2ConfigService.getSpKeysPassword());
+            //      set credential for signing
+            this.idpVerificationCert = VerifySignatureCredentials.getCredential(
+                    saml2ConfigService.getJksFileLocation(),
+                    saml2ConfigService.getJksStorePassword(),
+                    saml2ConfigService.getIdpCertAlias());
+        }
     }
 
     private Credential getSpKeypair(){
@@ -168,13 +170,19 @@ public class AuthenticationHandlerSAML2 extends DefaultAuthenticationFeedbackHan
             if (reqURI.equals(saml2ConfigService.getAcsPath())){
                 doClassloading();
                 MessageContext messageContext = decodeHttpPostSamlResp(httpServletRequest);
+                Assertion assertion = null;
                 boolean relayStateIsOk = validateRelayState(httpServletRequest, messageContext);
-                // If relay state from request = relay state from session))
+                // If relay state from request == relay state from session))
                 if (relayStateIsOk) {
                     Response response = (Response) messageContext.getMessage();
-                    EncryptedAssertion encryptedAssertion = response.getEncryptedAssertions().get(0);
-                    Assertion assertion = decryptAssertion(encryptedAssertion);
-                    verifyAssertionSignature(assertion);
+                    if (saml2ConfigService.getSaml2SPEncryptAndSign()) {
+                        EncryptedAssertion encryptedAssertion = response.getEncryptedAssertions().get(0);
+                        assertion = decryptAssertion(encryptedAssertion);
+                        verifyAssertionSignature(assertion);
+                    } else {
+                        // Not using encryption
+                        assertion = response.getAssertions().get(0);
+                    }
                     if (validateSaml2Conditions(httpServletRequest, assertion)){
                         logger.debug("Decrypted Assertion: ");
                         Helpers.logSAMLObject(assertion);
